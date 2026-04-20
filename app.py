@@ -56,13 +56,14 @@ with st.expander("📋 Required CSV Columns"):
 
     | Column | Description |
     |---|---|
-    | `Name` | Influencer / Party B full name |
-    | `Platform username` | Social media username |
-    | `Links` | Media account link |
-    | `Total videos` | Number of videos in the cooperation |
-    | `Rate` | USD rate per video |
-    | `Total rate` | Total fee (rate × videos) |
-    | `PayPal email` | Party B's PayPal email for payment |
+    | `username` | Influencer's social media username |
+    | `Influencer Name` | Influencer / Party B full name |
+    | `paypal email` | Party B's PayPal email for payment |
+    | `total video` | Number of videos in the cooperation |
+    | `rate` | USD rate per video |
+    | `total rate` | Total fee (rate × videos) |
+    | `Influencer links` | Media account link |
+    | `platform username` | Platform label (e.g. TikTok Video -username) |
     """)
 
 st.markdown("### 📤 Upload Files")
@@ -119,24 +120,24 @@ if uploaded_csv and uploaded_template:
                     try:
                         template = DocxTemplate(uploaded_template)
                         context = {
-                            'Influencer_name':   row['Name'],
-                            'platform_username': row['Platform username'],
-                            'Influencer_links':  row['Links'],
-                            'total_video':       row['Total videos'],
-                            'rate':              row['Rate'],
-                            'total_rate':        row['Total rate'],
-                            'paypal_email':      row['PayPal email'],
+                            'Influencer_name':   row['Influencer Name'],
+                            'platform_username': row['platform username'],
+                            'Influencer_links':  row['Influencer links'],
+                            'total_video':       row['total video'],
+                            'rate':              row['rate'],
+                            'total_rate':        row['total rate'],
+                            'paypal_email':      row['paypal email'],
                         }
                         template.render(context)
 
-                        influencer_name = str(row['Name'])
-                        username        = str(row['Platform username'])
+                        influencer_name = str(row['Influencer Name'])
+                        username        = str(row['username'])
 
-                        # Safe temp names (no special chars for filesystem)
+                        # Safe temp names for filesystem
                         safe_name     = influencer_name.replace(" ", "_").replace("/", "-")
                         safe_username = username.replace(" ", "_").replace("/", "-")
 
-                        # Final PDF filename as requested
+                        # Final PDF filename
                         pdf_filename = f"BlockBlast X {influencer_name} ({username}) Settlement Agreement.pdf"
 
                         with tempfile.TemporaryDirectory() as tmpdir:
@@ -151,7 +152,7 @@ if uploaded_csv and uploaded_template:
                         success_count += 1
 
                     except Exception as e:
-                        errors.append(f"Row {index} ({row.get('Name', 'Unknown')}): {e}")
+                        errors.append(f"Row {index} ({row.get('Influencer Name', f'Row {index}')}): {e}")
 
                     progress.progress((index + 1) / len(df), text=f"Processing {index + 1} of {len(df)}...")
 
